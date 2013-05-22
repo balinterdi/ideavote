@@ -23,17 +23,17 @@ App.Router.map(function() {
 });
 
 App.IndexRoute = Ember.Route.extend({
+  setupController: function() {
+    this.controllerFor('idea').set('model', App.Idea.createRecord());
+  },
   model: function() {
     return App.Idea.find();
   }
 });
 
-App.ApplicationController = Ember.ArrayController.extend({
+App.IdeaController = Ember.ObjectController.extend({
   sendIdea: function() {
-    var idea = App.Idea.createRecord({
-      title: "Great idea",
-      timestamp: new Date()
-    });
+    this.set('model.timestamp', new Date())
     App.store.commit();
   }
-});
+})

@@ -38,13 +38,7 @@
       </div>
       <div class="idea new-idea">
         <div class="row">
-          <!-- TODO: This could be a render idea and than the bindings could be properly set up -->
-          <div class="span8">
-            {{input value=title placeholder="Put your idea here"}}
-          </div>
-          <div class="span2">
-            <button class="btn btn-primary" {{action sendIdea}}>Send my idea</button>
-          </div>
+          {{ render "idea" }}
         </div>
       </div>
       {{ outlet }}
@@ -66,6 +60,15 @@
           </li>
         {{/each}}
       </ul>
+    </div>
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="idea">
+    <div class="span8">
+      {{input value=title placeholder="Put your idea here"}}
+    </div>
+    <div class="span2">
+      <button class="btn btn-primary" {{action sendIdea}}>Send my idea</button>
     </div>
   </script>
 
