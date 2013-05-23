@@ -31,9 +31,44 @@ App.IndexRoute = Ember.Route.extend({
   }
 });
 
+App.ApplicationController = Ember.ArrayController.extend({
+  needs: ['auth'],
+  authBinding: 'controllers.auth',
+
+  login: function() {
+    this.get('auth').login();
+  }
+});
+
 App.IdeaController = Ember.ObjectController.extend({
   sendIdea: function() {
-    this.set('model.timestamp', new Date())
+    this.set('model.timestamp', new Date());
     App.store.commit();
   }
+})
+
+App.AuthController = Ember.Controller.extend({
+  authed: false,
+
+  init: function() {
+    this.authClient = new FirebaseAuthClient(App.store.adapter.fb, function(error, user) {
+      if (error) {
+        console.log(error);
+      } else if (user) {
+        console.log(user);
+        //TODO: Make an own App.User class and store the following properties
+        // from the github user: username, displayName, avatar_url, profileUrl
+        this.set('authed', true);
+      } else {
+        console.log("user is logged out");
+        this.set('authed', false);
+      }
+    }.bind(this));
+  },
+
+  login: function() {
+    this.authClient.login('github');
+  }
+
+
 })
