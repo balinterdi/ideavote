@@ -61,11 +61,7 @@ App.AuthController = Ember.Controller.extend({
         this.set('authed', true);
         var user = App.User.find(githubUser.username);
         user.one('didLoad', function() {
-          //TODO: user does not have its properties loaded
-          // even if it already has them in the database
-          // when does didLoad actually get called?
-          if (user.get('username')) {
-          } else {
+          if (!user.get('name')) {
             user.setProperties({
               id: githubUser.username,
               name: githubUser.username,
