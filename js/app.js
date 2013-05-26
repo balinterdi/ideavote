@@ -14,8 +14,11 @@ App.Idea = DS.Firebase.Model.extend({
 });
 
 App.User = DS.Firebase.Model.extend({
-  nickname: DS.attr('string'),
-  votesLeft: DS.attr('integer')
+  name: DS.attr('string'),
+  displayName: DS.attr('string'),
+  avatarUrl: DS.attr('string'),
+  displayName: DS.attr('string'),
+  votesLeft: DS.attr('number', { defaultValue: 10 })
 })
 
 App.Router.map(function() {
@@ -49,16 +52,30 @@ App.IdeaController = Ember.ObjectController.extend({
 
 App.AuthController = Ember.Controller.extend({
   authed: false,
+  currentUser: null,
 
   init: function() {
-    this.authClient = new FirebaseAuthClient(App.store.adapter.fb, function(error, user) {
+    this.authClient = new FirebaseAuthClient(App.store.adapter.fb, function(error, githubUser) {
       if (error) {
-        console.log(error);
-      } else if (user) {
-        console.log(user);
-        //TODO: Make an own App.User class and store the following properties
-        // from the github user: username, displayName, avatar_url, profileUrl
+      } else if (githubUser) {
         this.set('authed', true);
+        var user = App.User.find(githubUser.username);
+        user.one('didLoad', function() {
+          //TODO: user does not have its properties loaded
+          // even if it already has them in the database
+          // when does didLoad actually get called?
+          if (user.get('username')) {
+          } else {
+            user.setProperties({
+              id: githubUser.username,
+              name: githubUser.username,
+              displayName: githubUser.displayName,
+              avatarUrl: githubUser.avatar_url
+            });
+            App.store.commit();
+          }
+        }.bind(this));
+        this.set('currentUser', user);
       } else {
         console.log("user is logged out");
         this.set('authed', false);
