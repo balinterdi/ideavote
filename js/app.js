@@ -70,7 +70,8 @@ App.AuthController = Ember.Controller.extend({
               id: githubUser.username,
               name: githubUser.username,
               displayName: githubUser.displayName,
-              avatarUrl: githubUser.avatar_url
+              avatarUrl: githubUser.avatar_url,
+              votesLeft: 10 // defaultValue does not work if record was fetched from find
             });
             App.store.commit();
           }
