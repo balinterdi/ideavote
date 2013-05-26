@@ -40,6 +40,10 @@ App.ApplicationController = Ember.ArrayController.extend({
 
   login: function() {
     this.get('auth').login();
+  },
+
+  logout: function() {
+    this.get('auth').logout();
   }
 });
 
@@ -82,7 +86,10 @@ App.AuthController = Ember.Controller.extend({
 
   login: function() {
     this.authClient.login('github');
-  }
+  },
 
+  logout: function() {
+    this.authClient.logout();
+  }
 
 })
