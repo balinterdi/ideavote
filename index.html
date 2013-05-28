@@ -43,18 +43,12 @@
           </div>
         </div>
       </div>
-      {{#if auth.authed }}
-      <div class="idea new-idea">
-        <div class="row">
-          {{ render "idea" }}
-        </div>
-      </div>
-      {{/if}}
       {{ outlet }}
     </div>
   </script>
 
-  <script type="text/x-handlebars" data-template-name="index">
+  <script type="text/x-handlebars" data-template-name="ideas">
+    {{ outlet }}
     <div class="idea-list">
       <ul class="unstyled">
         {{#each controller}}
@@ -72,12 +66,20 @@
     </div>
   </script>
 
-  <script type="text/x-handlebars" data-template-name="idea">
-    <div class="span8">
-      {{input value=title placeholder="Put your idea here"}}
-    </div>
-    <div class="span2">
-      <button class="btn btn-primary" {{action sendIdea}}>Send my idea</button>
+  <script type="text/x-handlebars" data-template-name="ideas/new">
+    <div class="idea new-idea">
+      <div class="row">
+      {{#if controllers.auth.authed }}
+        <div class="span8">
+          {{input value=title placeholder="Put your idea here"}}
+        </div>
+        <div class="span2">
+          <button class="btn btn-primary" {{action sendIdea}}>Send my idea</button>
+        </div>
+      {{ else }}
+        <a {{action login}} class="login-link">Sign in</a> to vote or to submit your idea.
+      {{/if}}
+      </div>
     </div>
   </script>
 

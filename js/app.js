@@ -22,15 +22,32 @@ App.User = DS.Firebase.Model.extend({
 })
 
 App.Router.map(function() {
-  // put your routes here
+  this.resource('ideas', function() {
+    this.route('new');
+  });
 });
 
 App.IndexRoute = Ember.Route.extend({
-  setupController: function() {
-    this.controllerFor('idea').set('model', App.Idea.createRecord());
-  },
+  redirect: function() {
+    this.transitionTo('ideas.index');
+  }
+});
+
+App.IdeasRoute = Ember.Route.extend({
   model: function() {
     return App.Idea.find();
+  }
+});
+
+App.IdeasIndexRoute = Ember.Route.extend({
+  redirect: function() {
+    this.transitionTo('ideas.new');
+  }
+});
+
+App.IdeasNewRoute = Ember.Route.extend({
+  model: function() {
+    return App.Idea.createRecord();
   }
 });
 
@@ -47,12 +64,20 @@ App.ApplicationController = Ember.ArrayController.extend({
   }
 });
 
-App.IdeaController = Ember.ObjectController.extend({
+App.IdeasNewController = Ember.ObjectController.extend({
+  needs: ['auth'],
+  //TODO: This fails, dunno why
+  // authBinding: 'controllers.auth',
   sendIdea: function() {
     this.set('model.timestamp', new Date());
     App.store.commit();
+  },
+
+  login: function() {
+    this.get('controllers.auth').login();
   }
-})
+
+});
 
 App.AuthController = Ember.Controller.extend({
   authed: false,
