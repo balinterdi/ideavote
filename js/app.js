@@ -10,7 +10,11 @@ App.store = DS.Store.create({
 App.Idea = DS.Firebase.Model.extend({
   title: DS.attr('string'),
   voters: DS.hasMany('App.User'),
-  timestamp: DS.attr('date')
+  timestamp: DS.attr('date'),
+
+  isVotedBy: function(user) {
+    return this.get('voters').contains(user);
+  }
 });
 
 App.User = DS.Firebase.Model.extend({
@@ -62,6 +66,22 @@ App.ApplicationController = Ember.ArrayController.extend({
   logout: function() {
     this.get('auth').logout();
   }
+});
+
+App.IdeaController = Ember.ObjectController.extend({
+  needs: ['auth'],
+  // authBinding: ['controllers.auth'],
+
+  vote: function() {
+    var user = this.get('controllers.auth.currentUser');
+    this.get('model').get('voters').pushObject(user);
+    App.store.commit();
+  },
+
+  voted: function() {
+    var user = this.get('controllers.auth.currentUser');
+    return this.get('model').isVotedBy(user);
+  }.property('model.voters.@each')
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
