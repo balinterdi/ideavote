@@ -69,7 +69,7 @@
       <strong>{{ title }}</strong>
     </div>
     <div class="span2">
-      {{#if controllers.auth.authed }}
+      {{#if auth.authed }}
         {{#if voted }}
           <button class="btn disabled" disabled>
             You +1ed this.
@@ -86,7 +86,7 @@
   <script type="text/x-handlebars" data-template-name="ideas/new">
     <div class="idea new-idea">
       <div class="row">
-      {{#if controllers.auth.authed }}
+      {{#if auth.authed }}
         <div class="span8">
           {{input value=title placeholder="Put your idea here"}}
         </div>

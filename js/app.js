@@ -56,6 +56,7 @@ App.IdeasNewRoute = Ember.Route.extend({
 });
 
 App.ApplicationController = Ember.ArrayController.extend({
+  auth: null,
   needs: ['auth'],
   authBinding: 'controllers.auth',
 
@@ -69,32 +70,34 @@ App.ApplicationController = Ember.ArrayController.extend({
 });
 
 App.IdeaController = Ember.ObjectController.extend({
-  needs: ['auth'],
-  // authBinding: ['controllers.auth'],
+  auth: null,
+  needs: 'auth',
+  authBinding: 'controllers.auth',
 
   vote: function() {
-    var user = this.get('controllers.auth.currentUser');
+    var user = this.get('auth.currentUser');
     this.get('model').get('voters').pushObject(user);
     App.store.commit();
   },
 
   voted: function() {
-    var user = this.get('controllers.auth.currentUser');
+    var user = this.get('auth.currentUser');
     return this.get('model').isVotedBy(user);
   }.property('model.voters.@each')
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
-  needs: ['auth'],
-  //TODO: This fails, dunno why
-  // authBinding: 'controllers.auth',
+  auth: null,
+  needs: 'auth',
+  authBinding: 'controllers.auth',
+
   sendIdea: function() {
     this.set('model.timestamp', new Date());
     App.store.commit();
   },
 
   login: function() {
-    this.get('controllers.auth').login();
+    this.get('auth').login();
   }
 
 });
