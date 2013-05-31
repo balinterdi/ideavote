@@ -54,9 +54,7 @@
         {{#each controller}}
           <li>
             <div class="idea">
-              <div class="row">
-                {{ render "idea" this }}
-              </div>
+              {{ render "idea" this }}
             </div>
           </li>
         {{/each}}
@@ -65,21 +63,28 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="idea">
-    <div class="span8">
-      <strong>{{ title }}</strong>
-    </div>
-    <div class="span2">
-      {{#if auth.authed }}
-        {{#if voted }}
-          <button class="btn disabled" disabled>
-            You +1ed this.
-          </button>
-        {{ else }}
-          <button class="btn btn-primary" {{action vote}}>
-            I vote on this
-          </button>
+    <div class="row">
+      <div class="span8">
+        <strong>{{ title }}</strong>
+      </div>
+      <div class="span2">
+        {{#if auth.authed }}
+          {{#if voted }}
+            <button class="btn disabled" disabled>
+              You +1ed this.
+            </button>
+          {{ else }}
+            <button class="btn btn-primary" {{action vote}}>
+              I vote on this
+            </button>
+          {{/if}}
         {{/if}}
-      {{/if}}
+      </div>
+      <div class="row">
+        <div class="span8">
+          {{ votersSentence voters }}
+        </div>
+      </div>
     </div>
   </script>
 

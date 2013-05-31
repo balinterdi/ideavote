@@ -31,6 +31,13 @@ App.Router.map(function() {
   });
 });
 
+App.ApplicationRoute = Ember.Route.extend({
+  setupController: function() {
+    //NOTE: This is needed so that users are loaded and displayed correctly as voters
+    return App.User.find();
+  }
+});
+
 App.IndexRoute = Ember.Route.extend({
   redirect: function() {
     this.transitionTo('ideas.index');
@@ -55,7 +62,7 @@ App.IdeasNewRoute = Ember.Route.extend({
   }
 });
 
-App.ApplicationController = Ember.ArrayController.extend({
+App.ApplicationController = Ember.Controller.extend({
   auth: null,
   needs: ['auth'],
   authBinding: 'controllers.auth',
@@ -140,4 +147,24 @@ App.AuthController = Ember.Controller.extend({
     this.authClient.logout();
   }
 
-})
+});
+
+Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
+  //TODO: If a voter == logged in user, write "you"
+  var sentence = ["Voted by"];
+  var voterNames = voters.mapProperty('name');
+  var votersCount = voterNames.length;
+
+  if (!votersCount) {
+    sentence.push("nobody yet");
+  } else {
+    if (votersCount == 1) {
+      sentence.push(voterNames[0]);
+    } else {
+      butlast = voterNames.slice(0, votersCount - 1);
+      sentence.push(butlast.join(', '));
+      sentence.push('and ' + voterNames[voterNames.length - 1]);
+    }
+  }
+  return sentence.join(' ');
+});
