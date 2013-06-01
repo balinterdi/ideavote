@@ -150,9 +150,16 @@ App.AuthController = Ember.Controller.extend({
 });
 
 Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
-  //TODO: If a voter == logged in user, write "you"
+  var currentUser = options.data.keywords.controller.get('auth.currentUser')
   var sentence = ["Voted by"];
-  var voterNames = voters.mapProperty('name');
+  if (voters.contains(currentUser)) {
+    sentence.push('you, ');
+  }
+  var voterNames = voters.map(function(voter) {
+    if (voter !== currentUser) {
+      return voter.get('name');
+    }
+  });
   var votersCount = voterNames.length;
 
   if (!votersCount) {
