@@ -152,11 +152,10 @@ App.AuthController = Ember.Controller.extend({
 Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
   var currentUser = options.data.keywords.controller.get('auth.currentUser')
   var sentence = ["Voted by"];
-  if (voters.contains(currentUser)) {
-    sentence.push('you, ');
-  }
   var voterNames = voters.map(function(voter) {
-    if (voter !== currentUser) {
+    if (voter === currentUser) {
+      return 'you';
+    } else {
       return voter.get('name');
     }
   });
@@ -168,9 +167,17 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
     if (votersCount == 1) {
       sentence.push(voterNames[0]);
     } else {
-      butlast = voterNames.slice(0, votersCount - 1);
+      // Sort
+      var sortedNames = [];
+      var youIndex = voterNames.indexOf("you");
+      if  (youIndex != -1) {
+        sortedNames = ["you"].concat(voterNames.slice(0, youIndex)).concat(voterNames.slice(youIndex + 1));
+      } else {
+        sortedNames = voterNames;
+      }
+      butlast = sortedNames.slice(0, votersCount - 1);
       sentence.push(butlast.join(', '));
-      sentence.push('and ' + voterNames[voterNames.length - 1]);
+      sentence.push('and ' + sortedNames[voterNames.length - 1]);
     }
   }
   return sentence.join(' ');
