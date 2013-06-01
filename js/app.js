@@ -165,7 +165,7 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
     sentence.push("nobody yet");
   } else {
     if (votersCount == 1) {
-      sentence.push(voterNames[0]);
+      sentence.push("<em>" + voterNames[0] + "</em>");
     } else {
       // Sort
       var sortedNames = [];
@@ -175,10 +175,13 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
       } else {
         sortedNames = voterNames;
       }
+      sortedNames = sortedNames.map(function(name) {
+        return "<em>" + name + "</em>";
+      });
       butlast = sortedNames.slice(0, votersCount - 1);
       sentence.push(butlast.join(', '));
       sentence.push('and ' + sortedNames[voterNames.length - 1]);
     }
   }
-  return sentence.join(' ');
+  return new Handlebars.SafeString(sentence.join(' '));
 });
