@@ -7,9 +7,9 @@ App.store = DS.Store.create({
   })
 });
 
-App.Idea = DS.Firebase.Model.extend({
+App.Idea = DS.Firebase.LiveModel.extend({
   title: DS.attr('string'),
-  voters: DS.hasMany('App.User'),
+  voters: DS.hasMany('App.User', { live: true }),
   timestamp: DS.attr('date'),
 
   isVotedBy: function(user) {
@@ -17,7 +17,7 @@ App.Idea = DS.Firebase.Model.extend({
   }
 });
 
-App.User = DS.Firebase.Model.extend({
+App.User = DS.Firebase.LiveModel.extend({
   name: DS.attr('string'),
   displayName: DS.attr('string'),
   avatarUrl: DS.attr('string'),
@@ -153,8 +153,9 @@ App.AuthController = Ember.Controller.extend({
 
 });
 
-Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
+Ember.Handlebars.registerBoundHelper('votersSentence', function(votersCount, options) {
   var currentUser = options.data.keywords.controller.get('auth.currentUser')
+  var voters = options.data.keywords.controller.get('model.voters');
   var sentence = ["Voted by"];
   var voterNames = voters.map(function(voter) {
     if (voter === currentUser) {
@@ -163,7 +164,6 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
       return voter.get('name');
     }
   });
-  var votersCount = voterNames.length;
 
   if (!votersCount) {
     sentence.push("nobody yet");
