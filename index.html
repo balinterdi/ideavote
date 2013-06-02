@@ -67,6 +67,9 @@
       <div class="span8">
         <strong>{{ title }}</strong>
       </div>
+      <div class="span1">
+        {{ votersCount }}
+      </div>
       <div class="span2">
         {{#if auth.authed }}
           {{#if voted }}
@@ -92,7 +95,7 @@
     <div class="idea new-idea">
       <div class="row">
       {{#if auth.authed }}
-        <div class="span8">
+        <div class="span9">
           {{input value=title placeholder="Put your idea here"}}
         </div>
         <div class="span2">

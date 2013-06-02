@@ -87,10 +87,14 @@ App.IdeaController = Ember.ObjectController.extend({
     App.store.commit();
   },
 
+  votersCount: function() {
+    return this.get('voters.length');
+  }.property('voters.@each'),
+
   voted: function() {
     var user = this.get('auth.currentUser');
     return this.get('model').isVotedBy(user);
-  }.property('model.voters.@each')
+  }.property('voters.@each')
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
