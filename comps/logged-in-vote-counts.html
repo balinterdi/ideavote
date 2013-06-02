@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ideavote - Let the best idea win</title>
+  <link rel="stylesheet" href="css/bootstrap-responsive.css">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+  <div class="container">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="#">Ideavote</a>
+        <div class="pull-right">
+          <ul class="nav pull-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Balint
+                <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="/user/preferences"><i class="icon-cog"></i> Preferences</a></li>
+                <li class="divider"></li>
+                <li><a href="/auth/logout"><i class="icon-off"></i> Logout</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <div id="votes-left">
+                <span class="badge badge-info">9</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="idea new-idea">
+      <div class="row">
+        <div class="span9">
+          <input type="text" placeholder="Put your idea here" />
+        </div>
+        <div class="span2">
+          <button class="btn btn-primary">Send my idea</button>
+        </div>
+      </div>
+    </div>
+    <div class="idea-list">
+      <ul class="unstyled">
+        <li>
+          <div class="idea">
+            <div class="row">
+              <div class="span8">
+                <strong>REPL workflow</strong>
+              </div>
+              <div class="span1">
+                9 votes
+              </div>
+              <div class="span2">
+                <button class="btn btn-primary">
+                  I vote on this
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="span10">
+                Voted on by <em>barna</em>, <em>tothda</em>, and <em>7 others</em>
+              </div>
+            </div>
+          </div>
+          <div class="idea">
+            <div class="row">
+              <div class="span8">
+                <strong>A more thorough look on basic data structures</strong>
+              </div>
+              <div class="span1">
+                3 votes
+              </div>
+              <div class="span2">
+                <button class="btn disabled" disabled>
+                  You +1ed this.
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="span8">
+                Voted on by <em>you</em>, <em>algernone</em>, <em>tothda</em> and <em>athos</em>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="idea">
+            <div class="row">
+              <div class="span8">
+                <strong>Pedestal.io</strong>
+              </div>
+              <div class="span1">
+                2 votes
+              </div>
+              <div class="span2">
+                <button class="btn btn-primary">
+                  +1
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="span10">
+                Voted on by <em>algernone</em> and <em>daniel.abel</em>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="idea">
+            <div class="row">
+              <div class="span8">
+                <strong>PHP mastery</strong>
+              </div>
+              <div class="span1">
+                0 votes
+              </div>
+              <div class="span2">
+                <button class="btn btn-primary">
+                  Vote
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="span10">
+                Voted on by nobody yet
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="/js/libs/jquery-1.9.1.js"></script>
+  <script src="/js/libs/bootstrap.js"></script>
+</body>
+</html>
