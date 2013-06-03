@@ -7,9 +7,9 @@ App.store = DS.Store.create({
   })
 });
 
-App.Idea = DS.Firebase.LiveModel.extend({
+App.Idea = DS.Firebase.Model.extend({
   title: DS.attr('string'),
-  voters: DS.hasMany('App.User', { live: true }),
+  voters: DS.hasMany('App.User'),
   timestamp: DS.attr('date'),
 
   isVotedBy: function(user) {
@@ -17,7 +17,7 @@ App.Idea = DS.Firebase.LiveModel.extend({
   }
 });
 
-App.User = DS.Firebase.LiveModel.extend({
+App.User = DS.Firebase.Model.extend({
   name: DS.attr('string'),
   displayName: DS.attr('string'),
   avatarUrl: DS.attr('string'),
