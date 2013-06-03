@@ -153,9 +153,8 @@ App.AuthController = Ember.Controller.extend({
 
 });
 
-Ember.Handlebars.registerBoundHelper('votersSentence', function(votersCount, options) {
+Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
   var currentUser = options.data.keywords.controller.get('auth.currentUser')
-  var voters = options.data.keywords.controller.get('model.voters');
   var sentence = ["Voted by"];
   var voterNames = voters.map(function(voter) {
     if (voter === currentUser) {
@@ -165,6 +164,7 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(votersCount, opt
     }
   });
 
+  var votersCount = voters.get('length');
   if (!votersCount) {
     sentence.push("nobody yet");
   } else {
@@ -188,4 +188,4 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(votersCount, opt
     }
   }
   return new Handlebars.SafeString(sentence.join(' '));
-});
+}, '@each');
