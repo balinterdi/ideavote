@@ -18,11 +18,24 @@ App.Idea = DS.Firebase.Model.extend({
 });
 
 App.User = DS.Firebase.Model.extend({
+  initialVotes: 10,
+
   name: DS.attr('string'),
   displayName: DS.attr('string'),
   avatarUrl: DS.attr('string'),
   displayName: DS.attr('string'),
-  votesLeft: DS.attr('number', { defaultValue: 10 })
+  votedOn: DS.hasMany('App.Idea'),
+  votesEarned: DS.attr('number'),
+
+  _votesEarned: function() {
+    //NOTE: Unfortunately { defaultValue: 0 } does not work
+    //since the model is already fetched from the database before creating it
+    return this.get('votesEarned') ? this.get('votesEarned') : 0;
+  }.property('votesEarned'),
+
+  votesLeft: function() {
+    return this.get('initialVotes') - this.get('votedOn.length') + this.get('_votesEarned');
+  }.property('initialVotes', 'votedOn.length', '_votesEarned')
 })
 
 App.Router.map(function() {
@@ -129,8 +142,7 @@ App.AuthController = Ember.Controller.extend({
               id: githubUser.username,
               name: githubUser.username,
               displayName: githubUser.displayName,
-              avatarUrl: githubUser.avatar_url,
-              votesLeft: 10 // defaultValue does not work if record was fetched from find
+              avatarUrl: githubUser.avatar_url
             });
             App.store.commit();
           }
