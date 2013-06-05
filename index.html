@@ -52,11 +52,13 @@
     <div class="idea-list">
       <ul class="unstyled">
         {{#each controller}}
-          <li>
-            <div class="idea">
-              {{ render "idea" this }}
-            </div>
-          </li>
+          {{#unless isNew }}
+            <li>
+              <div class="idea">
+                {{ render "idea" this }}
+              </div>
+            </li>
+          {{/unless}}
         {{/each}}
       </ul>
     </div>
