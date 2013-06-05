@@ -101,7 +101,11 @@
           {{input value=title placeholder="Put your idea here"}}
         </div>
         <div class="span2">
-          <button class="btn btn-primary" {{action sendIdea}}>Send my idea</button>
+          {{#if isDisabled }}
+            <button disabled="disabled" {{bindAttr class=":btn :btn-primary isDisabled:disabled" }} {{action sendIdea}} >Send my idea</button>
+          {{else}}
+            <button {{bindAttr class=":btn :btn-primary isDisabled:disabled" }} {{action sendIdea}} >Send my idea</button>
+          {{/if}}
         </div>
       {{ else }}
         <a {{action login}} class="login-link">Sign in</a> to vote or to submit your idea.

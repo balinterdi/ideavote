@@ -115,6 +115,10 @@ App.IdeasNewController = Ember.ObjectController.extend({
   needs: 'auth',
   authBinding: 'controllers.auth',
 
+  isDisabled: function() {
+    return Ember.isEmpty(this.get('title'));
+  }.property('title'),
+
   sendIdea: function() {
     this.set('model.timestamp', new Date());
     App.store.commit();
