@@ -118,6 +118,7 @@ App.IdeasNewController = Ember.ObjectController.extend({
   sendIdea: function() {
     this.set('model.timestamp', new Date());
     App.store.commit();
+    this.set('model', App.Idea.createRecord());
   },
 
   login: function() {
