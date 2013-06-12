@@ -100,6 +100,12 @@ App.IdeaController = Ember.ObjectController.extend({
     App.store.commit();
   },
 
+  undoVote: function() {
+    var user = this.get('auth.currentUser');
+    this.get('model').get('voters').removeObject(user);
+    App.store.commit();
+  },
+
   votersCount: function() {
     return this.get('voters.length');
   }.property('voters.@each'),

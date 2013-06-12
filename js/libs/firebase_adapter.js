@@ -845,11 +845,20 @@ define("firebase/serializer",
               ids.push(childSnap.name());
             });
 
+            // what is in the manyArray but not in ids needs to be added
             manyArray.forEach(function (childRecord) {
               childRecord.getRef(record.get("id"));     // hacky - forces id creation
               if (!ids.contains(childRecord.get("id")))
                 record.getRef().child(key).child(childRecord.get("id")).set(true);
             });
+
+            // what is in ids but not in the manyArray needs to be deleted
+            idsInHasMany = manyArray.mapProperty("id");
+            ids.forEach(function(id) {
+              if (!idsInHasMany.contains(id)) {
+                snapshot.ref().child(id).set(null);
+              }
+            })
           });
 
           return; 

@@ -75,8 +75,8 @@
       <div class="span2">
         {{#if auth.authed }}
           {{#if voted }}
-            <button class="btn disabled" disabled>
-              You +1ed this.
+            <button class="btn btn-info" {{ action undoVote }}>
+              Undo vote
             </button>
           {{ else }}
             <button class="btn btn-primary" {{action vote}}>
