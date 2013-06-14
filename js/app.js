@@ -12,6 +12,10 @@ App.Idea = DS.Firebase.Model.extend({
   voters: DS.hasMany('App.User'),
   timestamp: DS.attr('date'),
 
+  votersCount: function() {
+    return this.get('voters.length');
+  }.property('voters.@each'),
+
   isVotedBy: function(user) {
     return this.get('voters').contains(user);
   }
@@ -89,6 +93,11 @@ App.ApplicationController = Ember.Controller.extend({
   }
 });
 
+App.IdeasController = Ember.ArrayController.extend({
+  sortProperties: ['votersCount', 'title'],
+  sortAscending: false
+});
+
 App.IdeaController = Ember.ObjectController.extend({
   auth: null,
   needs: 'auth',
@@ -105,10 +114,6 @@ App.IdeaController = Ember.ObjectController.extend({
     this.get('model').get('voters').removeObject(user);
     App.store.commit();
   },
-
-  votersCount: function() {
-    return this.get('voters.length');
-  }.property('voters.@each'),
 
   voted: function() {
     var user = this.get('auth.currentUser');
