@@ -52,45 +52,45 @@
     <div class="idea-list">
       <ul class="unstyled">
         {{#each controller}}
-          {{#unless isNew }}
-            <li>
-              <div class="idea">
-                {{ render "idea" this }}
-              </div>
-            </li>
-          {{/unless}}
+          {{ render "idea" this }}
         {{/each}}
       </ul>
     </div>
   </script>
 
   <script type="text/x-handlebars" data-template-name="idea">
-    <div class="row">
-      <div class="span8">
-        <strong>{{ title }}</strong>
-      </div>
-      <div class="span1">
-        {{ votersCount }}
-      </div>
-      <div class="span2">
-        {{#if auth.authed }}
-          {{#if voted }}
-            <button class="btn btn-info" {{ action undoVote }}>
-              Undo vote
-            </button>
-          {{ else }}
-          <button class="btn btn-primary" {{action vote}} {{bindAttr disabled=isDisabled}}>
-              I vote on this
-            </button>
-          {{/if}}
-        {{/if}}
-      </div>
-      <div class="row">
-        <div class="span8">
-          {{ votersSentence voters }}
+    {{#if displayable}}
+      <li>
+        <div class="idea">
+          <div class="row">
+            <div class="span8">
+              <strong>{{ title }}</strong>
+            </div>
+            <div class="span1">
+              {{ votersCount }}
+            </div>
+            <div class="span2">
+              {{#if auth.authed }}
+              {{#if voted }}
+              <button class="btn btn-info" {{ action undoVote }}>
+                Undo vote
+              </button>
+              {{ else }}
+              <button class="btn btn-primary" {{action vote}} {{bindAttr disabled=isDisabled}}>
+                I vote on this
+              </button>
+              {{/if}}
+              {{/if}}
+            </div>
+            <div class="row">
+              <div class="span8">
+                {{ votersSentence voters }}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </li>
+    {{/if}}
   </script>
 
   <script type="text/x-handlebars" data-template-name="ideas/new">
