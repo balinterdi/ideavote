@@ -103,6 +103,10 @@ App.IdeaController = Ember.ObjectController.extend({
   needs: 'auth',
   authBinding: 'controllers.auth',
 
+  isDisabled: function() {
+    return Ember.isEmpty(this.get('title'));
+  }.property('title'),
+
   vote: function() {
     var user = this.get('auth.currentUser');
     this.get('model').get('voters').pushObject(user);

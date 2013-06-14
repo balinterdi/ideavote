@@ -79,7 +79,7 @@
               Undo vote
             </button>
           {{ else }}
-            <button class="btn btn-primary" {{action vote}}>
+          <button class="btn btn-primary" {{action vote}} {{bindAttr disabled=isDisabled}}>
               I vote on this
             </button>
           {{/if}}
