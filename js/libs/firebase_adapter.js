@@ -638,7 +638,7 @@ define("firebase/model",
           var attrs = Ember.get(this.constructor, "attributes");
 
           ref.on("child_added", function(prop) {
-            if (attrs.get(prop.name()) && (this.get(prop.name()) === undefined)) {
+            if (attrs.get(prop.name()) && (this.get(prop.name()) === null)) {
               this.store.didUpdateAttribute(this, prop.name(), prop.val());
               this.trigger("didUpdate");
             }
