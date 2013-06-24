@@ -188,6 +188,27 @@ App.AuthController = Ember.Controller.extend({
 
 });
 
+App.FromNowView = Ember.View.extend({
+  tagName: 'time',
+  template: Ember.Handlebars.compile('{{view.output}}'),
+  output: function() {
+    return moment(this.get('value')).fromNow();
+  }.property('value'),
+
+  didInsertElement: function() {
+    this.tick();
+  },
+
+  tick: function() {
+    Ember.run.later(this, function() {
+      console.log('tick');
+      this.notifyPropertyChange('value');
+      this.tick();
+    }, 1000);
+  }
+
+});
+
 Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
   var currentUser = options.data.keywords.controller.get('auth.currentUser')
   var sentence = ["Voted by"];
@@ -224,3 +245,5 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
   }
   return new Handlebars.SafeString(sentence.join(' '));
 }, '@each');
+
+Ember.Handlebars.helper('fromNow', App.FromNowView);

@@ -63,8 +63,11 @@
       <li>
         <div class="idea">
           <div class="row">
-            <div class="span8">
+            <div class="span6">
               <strong>{{ title }}</strong>
+            </div>
+            <div class="span2">
+              {{ fromNow value=timestamp }}
             </div>
             <div class="span1">
               {{ votersCount }}
@@ -122,6 +125,7 @@
   <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
   <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase-auth-client.js'></script>
   <script src="js/libs/firebase_adapter.js"></script>
+  <script src="js/libs/moment.min.js"></script>
   <script src="js/app.js"></script>
 
 </body>
