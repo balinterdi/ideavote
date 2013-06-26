@@ -63,36 +63,37 @@
       <li>
         <div class="idea">
           <div class="row">
-            <div class="span6">
+            <div class="span8">
               <strong>{{ title }}</strong>
             </div>
-            <div class="span2">
-              {{ fromNow value=timestamp }}
-            </div>
             <div class="span1">
-              {{ votersCount }}
+              {{ voteCount }}
             </div>
             <div class="span2">
               {{#if auth.authed }}
-              {{#if voted }}
-              <button class="btn btn-info" {{ action undoVote }}>
-                Undo vote
-              </button>
-              {{ else }}
-              <button class="btn btn-primary" {{action vote}} {{bindAttr disabled=isDisabled}}>
-                I vote on this
-              </button>
-              {{/if}}
+                {{view App.VoteButton votedAtBinding=voted }}
               {{/if}}
             </div>
             <div class="row">
               <div class="span8">
-                {{ votersSentence voters }}
+                {{ votersSentence votes }}
               </div>
             </div>
           </div>
         </div>
       </li>
+    {{/if}}
+  </script>
+
+  <script type="text/x-handlebars" data-template-name="voteButton">
+    {{#if voted }}
+      <button class="btn btn-info" {{ action undoVote }}> Undo vote </button>
+    {{ else }}
+      <button class="btn btn-primary"
+        {{action vote}}
+        {{bindAttr disabled=isDisabled}}>
+        I vote on this
+      </button>
     {{/if}}
   </script>
 
