@@ -71,7 +71,7 @@
             </div>
             <div class="span2">
               {{#if auth.authed }}
-                {{view App.VoteButton votedAtBinding=voted }}
+                {{view App.VoteButton voteBinding=usersVote }}
               {{/if}}
             </div>
             <div class="row">
@@ -86,8 +86,14 @@
   </script>
 
   <script type="text/x-handlebars" data-template-name="voteButton">
-    {{#if voted }}
-      <button class="btn btn-info" {{ action undoVote }}> Undo vote </button>
+    {{#if view.vote }}
+      {{#if view.justVoted }}
+        <button class="btn btn-info" {{ action undoVote }}> Undo vote </button>
+      {{else}}
+        <button class="btn disabled" disabled>
+          You voted
+        </button>
+      {{/if}}
     {{ else }}
       <button class="btn btn-primary"
         {{action vote}}

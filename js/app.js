@@ -142,14 +142,19 @@ App.IdeaController = Ember.ObjectController.extend({
     var user = this.get('auth.currentUser');
     var vote = idea.voteOf(user);
     vote.deleteRecord();
-    // this.get('model.votes').removeObject(vote);
     App.store.commit();
   },
 
-  voted: function() {
+  usersVote: function() {
     var user = this.get('auth.currentUser');
-    return this.get('model').isVotedBy(user);
-  }.property('auth.currentUser', 'votes.@each')
+    return this.get('model').voteOf(user);
+  }.property('auth.currentUser', 'votes.@each'),
+
+  justVoted: function() {
+    var vote = this.get('usersVote');
+    var fiveSecondsAgo = moment().subtract('seconds', 5);
+    return vote && fiveSecondsAgo.isBefore(moment(vote.get('createdAt')));
+  }.property('usersVote')
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
@@ -263,7 +268,7 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(votes, options) 
       sortedNames = sortedNames.map(function(name) {
         return "<em>" + name + "</em>";
       });
-      butlast = sortedNames.slice(0, votersCount - 1);
+      butlast = sortedNames.slice(0, votesCount - 1);
       sentence.push(butlast.join(', '));
       sentence.push('and ' + sortedNames[voterNames.length - 1]);
     }
@@ -272,5 +277,26 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(votes, options) 
 }, '@each');
 
 App.VoteButton = Ember.View.extend({
-  templateName: 'voteButton'
+  templateName: 'voteButton',
+
+  votedAt: function() {
+    var votedAt = this.get('vote.createdAt');
+    return (votedAt ? moment(votedAt).fromNow() : null);
+  }.property('vote'),
+
+  justVoted: function() {
+    var oneMinute = moment.duration(1, 'minutes');
+    return moment(this.get('vote.createdAt')).isAfter(moment().subtract(oneMinute));
+  }.property('vote'),
+
+  didInsertElement: function() {
+    this.tick();
+  },
+
+  tick: function() {
+    Ember.run.later(this, function() {
+      this.notifyPropertyChange('vote');
+      this.tick();
+    }, 5000);
+  }
 });
