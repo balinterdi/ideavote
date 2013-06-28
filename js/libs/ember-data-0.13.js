@@ -3698,7 +3698,6 @@ DS.Model = Ember.Object.extend(Ember.Evented, LoadPromise, {
   },
 
   adapterDidDirty: function() {
-    console.log('adapterDidDirty')
     this.send('becomeDirty');
     this.updateRecordArraysLater();
   },
