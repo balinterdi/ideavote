@@ -264,25 +264,30 @@ App.VoteButton = Ember.View.extend({
   }.property('vote'),
 
   justVoted: function() {
-    var oneMinute = moment.duration(1, 'minutes');
-    return moment(this.get('vote.createdAt')).isAfter(moment().subtract(oneMinute));
+    if (!this.get('vote')) {
+      return null;
+    }
+    var tenSeconds = moment.duration(10, 'seconds');
+    return moment(this.get('vote.createdAt')).isAfter(moment().subtract(tenSeconds));
   }.property('vote'),
-
-  didInsertElement: function() {
-    this.tick();
-  },
 
   tick: function() {
     var nextTick = Ember.run.later(this, function() {
       this.notifyPropertyChange('vote');
-      this.tick();
-    }, 10 * 1000);
+      this.cancelTick();
+    }, 11 * 1000);
     this.set('nextTick', nextTick);
-  },
+  }.observes('vote'),
 
   willDestroyElement: function() {
+    this.cancelTick();
+  },
+
+  cancelTick: function() {
     var nextTick = this.get('nextTick');
-    Ember.run.cancel(nextTick);
+    if (nextTick) {
+      Ember.run.cancel(nextTick);
+    }
   }
 
 });
