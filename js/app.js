@@ -1,23 +1,32 @@
 App = Ember.Application.create();
 
 App.store = DS.Store.create({
-  revision: 12,
   adapter: DS.Firebase.Adapter.create({
-    dbName: 'ideavote' //TODO: later should come from environment var
+    dbName: 'ideavote-development' //TODO: later should come from environment var
   })
 });
 
 App.Idea = DS.Firebase.LiveModel.extend({
   title: DS.attr('string'),
-  voters: DS.hasMany('App.User'),
+  votes: DS.hasMany('App.Vote'),
   timestamp: DS.attr('date'),
 
-  votersCount: function() {
-    return this.get('voters.length');
-  }.property('voters.@each'),
+  didUpdate: function() {
+    console.log('idea changed', this.get('title'));
+  },
+
+  voteCount: function() {
+    return this.get('votes.length');
+  }.property('votes.@each'),
+
+  voteOf: function(user) {
+    return this.get('votes').find(function(vote) {
+      return vote.get('voter') === user;
+    });
+  },
 
   isVotedBy: function(user) {
-    return this.get('voters').contains(user);
+    return this.get('votes').mapProperty('voter').contains(user);
   }
 });
 
@@ -28,8 +37,12 @@ App.User = DS.Firebase.LiveModel.extend({
   displayName: DS.attr('string'),
   avatarUrl: DS.attr('string'),
   displayName: DS.attr('string'),
-  votedOn: DS.hasMany('App.Idea'),
+  votes: DS.hasMany('App.Vote'),
   votesEarned: DS.attr('number'),
+
+  didUpdate: function() {
+    console.log('user changed', this.get('name'));
+  },
 
   _votesEarned: function() {
     //NOTE: Unfortunately { defaultValue: 0 } does not work
@@ -38,9 +51,15 @@ App.User = DS.Firebase.LiveModel.extend({
   }.property('votesEarned'),
 
   votesLeft: function() {
-    return this.get('initialVotes') - this.get('votedOn.length') + this.get('_votesEarned');
-  }.property('initialVotes', 'votedOn.length', '_votesEarned')
-})
+    return this.get('initialVotes') - this.get('votes.length') + this.get('_votesEarned');
+  }.property('initialVotes', 'votes.length', '_votesEarned')
+});
+
+App.Vote = DS.Firebase.LiveModel.extend({
+  voter:     DS.belongsTo('App.User'),
+  idea:      DS.belongsTo('App.Idea'),
+  createdAt: DS.attr('date')
+});
 
 App.Router.map(function() {
   this.resource('ideas', function() {
@@ -50,8 +69,9 @@ App.Router.map(function() {
 
 App.ApplicationRoute = Ember.Route.extend({
   setupController: function() {
-    //NOTE: This is needed so that users are loaded and displayed correctly as voters
-    return App.User.find();
+    // This is needed for App.Vote associations to be properly
+    // materialized by the time votersSentence is rendered
+    App.Vote.find();
   }
 });
 
@@ -94,7 +114,7 @@ App.ApplicationController = Ember.Controller.extend({
 });
 
 App.IdeasController = Ember.ArrayController.extend({
-  sortProperties: ['votersCount', 'title'],
+  sortProperties: ['voteCount', 'title'],
   sortAscending: false
 });
 
@@ -113,20 +133,28 @@ App.IdeaController = Ember.ObjectController.extend({
 
   vote: function() {
     var user = this.get('auth.currentUser');
-    this.get('model').get('voters').pushObject(user);
+    var vote = App.Vote.createRecord({ voter: user, idea: this.get('model'), createdAt: new Date() });
     App.store.commit();
   },
 
   undoVote: function() {
+    var idea = this.get('model');
     var user = this.get('auth.currentUser');
-    this.get('model').get('voters').removeObject(user);
+    var vote = idea.voteOf(user);
+    vote.deleteRecord();
     App.store.commit();
   },
 
-  voted: function() {
+  usersVote: function() {
     var user = this.get('auth.currentUser');
-    return this.get('model').isVotedBy(user);
-  }.property('voters.@each')
+    return this.get('model').voteOf(user);
+  }.property('auth.currentUser', 'votes.@each'),
+
+  justVoted: function() {
+    var vote = this.get('usersVote');
+    var fiveSecondsAgo = moment().subtract('seconds', 5);
+    return vote && fiveSecondsAgo.isBefore(moment(vote.get('createdAt')));
+  }.property('usersVote')
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
@@ -189,10 +217,11 @@ App.AuthController = Ember.Controller.extend({
 
 });
 
-Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options) {
+Ember.Handlebars.registerBoundHelper('votersSentence', function(votes, options) {
   var currentUser = options.data.keywords.controller.get('auth.currentUser')
   var sentence = ["Voted by"];
-  var voterNames = voters.map(function(voter) {
+  var voterNames = votes.map(function(vote) {
+    var voter = vote.get('voter');
     if (voter === currentUser) {
       return 'you';
     } else {
@@ -200,11 +229,11 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
     }
   });
 
-  var votersCount = voters.get('length');
-  if (!votersCount) {
+  var votesCount = votes.get('length');
+  if (!votesCount) {
     sentence.push("nobody yet");
   } else {
-    if (votersCount == 1) {
+    if (votesCount == 1) {
       sentence.push("<em>" + voterNames[0] + "</em>");
     } else {
       // Sort
@@ -218,10 +247,47 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(voters, options)
       sortedNames = sortedNames.map(function(name) {
         return "<em>" + name + "</em>";
       });
-      butlast = sortedNames.slice(0, votersCount - 1);
+      butlast = sortedNames.slice(0, votesCount - 1);
       sentence.push(butlast.join(', '));
       sentence.push('and ' + sortedNames[voterNames.length - 1]);
     }
   }
   return new Handlebars.SafeString(sentence.join(' '));
 }, '@each');
+
+App.VoteButton = Ember.View.extend({
+  templateName: 'voteButton',
+
+  votedAt: function() {
+    var votedAt = this.get('vote.createdAt');
+    return (votedAt ? moment(votedAt).fromNow() : null);
+  }.property('vote'),
+
+  justVoted: function() {
+    if (!this.get('vote')) {
+      return null;
+    }
+    var tenSeconds = moment.duration(10, 'seconds');
+    return moment(this.get('vote.createdAt')).isAfter(moment().subtract(tenSeconds));
+  }.property('vote'),
+
+  tick: function() {
+    var nextTick = Ember.run.later(this, function() {
+      this.notifyPropertyChange('vote');
+      this.cancelTick();
+    }, 11 * 1000);
+    this.set('nextTick', nextTick);
+  }.observes('vote'),
+
+  willDestroyElement: function() {
+    this.cancelTick();
+  },
+
+  cancelTick: function() {
+    var nextTick = this.get('nextTick');
+    if (nextTick) {
+      Ember.run.cancel(nextTick);
+    }
+  }
+
+});
