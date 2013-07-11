@@ -2,7 +2,7 @@ App = Ember.Application.create();
 
 App.store = DS.Store.create({
   adapter: DS.Firebase.Adapter.create({
-    dbName: 'ideavote-development' //TODO: later should come from environment var
+    dbName: window.dbName
   })
 });
 
