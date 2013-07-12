@@ -69,16 +69,16 @@
             <div class="span1">
               {{ voteCount }}
             </div>
-            <div class="span2">
-              {{#if auth.authed }}
-                {{view App.VoteButton voteBinding=usersVote }}
-              {{/if}}
-            </div>
-            <div class="row">
-              <div class="span8">
-                {{ votersSentence votes }}
+            {{#if auth.authed }}
+              <div class="span2">
+                  {{view App.VoteButton voteBinding=usersVote }}
               </div>
-            </div>
+              <div class="row">
+                <div class="span8">
+                  {{ votersSentence votes }}
+                </div>
+              </div>
+            {{/if}}
           </div>
         </div>
       </li>
