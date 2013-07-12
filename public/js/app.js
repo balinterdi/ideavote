@@ -124,7 +124,7 @@ App.IdeaController = Ember.ObjectController.extend({
   authBinding: 'controllers.auth',
 
   displayable: function() {
-    return !(Ember.isEmpty(this.get('title')) || this.get('isNew'));
+    return !(Ember.isEmpty(this.get('title')) || this.get('isDirty'));
   }.property('isNew', 'title'),
 
   isDisabled: function() {
