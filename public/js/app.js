@@ -141,12 +141,6 @@ App.IdeaController = Ember.ObjectController.extend({
     var user = this.get('auth.currentUser');
     return this.get('model').voteOf(user);
   }.property('auth.currentUser', 'votes.@each'),
-
-  justVoted: function() {
-    var vote = this.get('usersVote');
-    var fiveSecondsAgo = moment().subtract('seconds', 5);
-    return vote && fiveSecondsAgo.isBefore(moment(vote.get('createdAt')));
-  }.property('usersVote')
 });
 
 App.IdeasNewController = Ember.ObjectController.extend({
@@ -248,6 +242,7 @@ Ember.Handlebars.registerBoundHelper('votersSentence', function(votes, options) 
 
 App.VoteButton = Ember.View.extend({
   templateName: 'voteButton',
+  undoTime: 10,
 
   votedAt: function() {
     var votedAt = this.get('vote.createdAt');
@@ -256,10 +251,10 @@ App.VoteButton = Ember.View.extend({
 
   justVoted: function() {
     if (!this.get('vote')) {
-      return null;
+      return false;
     }
-    var tenSeconds = moment.duration(10, 'seconds');
-    return moment(this.get('vote.createdAt')).isAfter(moment().subtract(tenSeconds));
+    var undoTime = moment.duration(this.get('undoTime'), 'seconds');
+    return moment(this.get('vote.createdAt')).isAfter(moment().subtract(undoTime));
   }.property('vote'),
 
   tick: function() {
@@ -267,7 +262,7 @@ App.VoteButton = Ember.View.extend({
     var nextTick = Ember.run.later(this, function() {
       this.notifyPropertyChange('vote');
       this.cancelTick();
-    }, 11 * 1000);
+    }, (this.get('undoTime') + 1) * 1000);
     this.set('nextTick', nextTick);
   }.observes('vote'),
 
