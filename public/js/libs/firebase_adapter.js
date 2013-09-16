@@ -663,7 +663,7 @@ define("firebase/model",
 
           this.get("constructor.relationshipsByName").forEach(function(name, relationship) {
             if (relationship.kind == "hasMany" && relationship.options.live === true) {
-              console.log("adding live relation for " + relationship.key);
+              // console.log("adding live relation for " + relationship.key);
               var embedded = this.store.adapter.serializer.mappingOption(this.constructor, relationship.key, "embedded");
 
               // embedded relationship

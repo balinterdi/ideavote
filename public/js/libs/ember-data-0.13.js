@@ -3005,7 +3005,13 @@ var DirtyState = DS.State.extend({
 
     rollback: function(manager) {
       get(manager, 'record').rollback();
-    }
+    },
+
+    //FIXME: Until end of state block:
+    //Total hack to make live relations work in the Firebase adapter
+    loadedData: didChangeData,
+    materializingData: Ember.K,
+    finishedMaterializing: Ember.K
   }),
 
   // Once a record has been handed off to the adapter to be

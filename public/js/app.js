@@ -8,12 +8,12 @@ App.store = DS.Store.create({
 
 App.Idea = DS.Firebase.LiveModel.extend({
   title: DS.attr('string'),
-  votes: DS.hasMany('App.Vote'),
+  votes: DS.hasMany('App.Vote', { live: true }),
   timestamp: DS.attr('date'),
 
   voteCount: function() {
     return this.get('votes.length');
-  }.property('votes.@each'),
+  }.property('votes.length'),
 
   voteOf: function(user) {
     return this.get('votes').find(function(vote) {
@@ -33,7 +33,7 @@ App.User = DS.Firebase.LiveModel.extend({
   displayName: DS.attr('string'),
   avatarUrl: DS.attr('string'),
   displayName: DS.attr('string'),
-  votes: DS.hasMany('App.Vote'),
+  votes: DS.hasMany('App.Vote', { live: true }),
   votesEarned: DS.attr('number'),
 
   _votesEarned: function() {
@@ -116,7 +116,7 @@ App.IdeaController = Ember.ObjectController.extend({
   authBinding: 'controllers.auth',
 
   displayable: function() {
-    return !(Ember.isEmpty(this.get('title')) || this.get('isDirty'));
+    return !(Ember.isEmpty(this.get('title')) || this.get('isNew'));
   }.property('isNew', 'title'),
 
   isDisabled: function() {
