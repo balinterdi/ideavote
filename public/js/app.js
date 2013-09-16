@@ -11,10 +11,6 @@ App.Idea = DS.Firebase.LiveModel.extend({
   votes: DS.hasMany('App.Vote'),
   timestamp: DS.attr('date'),
 
-  didUpdate: function() {
-    console.log('idea changed', this.get('title'));
-  },
-
   voteCount: function() {
     return this.get('votes.length');
   }.property('votes.@each'),
@@ -39,10 +35,6 @@ App.User = DS.Firebase.LiveModel.extend({
   displayName: DS.attr('string'),
   votes: DS.hasMany('App.Vote'),
   votesEarned: DS.attr('number'),
-
-  didUpdate: function() {
-    console.log('user changed', this.get('name'));
-  },
 
   _votesEarned: function() {
     //NOTE: Unfortunately { defaultValue: 0 } does not work
@@ -183,7 +175,7 @@ App.AuthController = Ember.Controller.extend({
   currentUser: null,
 
   init: function() {
-    this.authClient = new FirebaseAuthClient(App.store.adapter.fb, function(error, githubUser) {
+    this.authClient = new FirebaseSimpleLogin(App.store.adapter.fb, function(error, githubUser) {
       if (error) {
       } else if (githubUser) {
         this.set('authed', true);
@@ -201,7 +193,6 @@ App.AuthController = Ember.Controller.extend({
         }.bind(this));
         this.set('currentUser', user);
       } else {
-        console.log("user is logged out");
         this.set('authed', false);
       }
     }.bind(this));
@@ -272,6 +263,7 @@ App.VoteButton = Ember.View.extend({
   }.property('vote'),
 
   tick: function() {
+    //NOTE: This observer does not get triggered on some occasions
     var nextTick = Ember.run.later(this, function() {
       this.notifyPropertyChange('vote');
       this.cancelTick();
