@@ -11,10 +11,7 @@ App.Idea = DS.Firebase.LiveModel.extend({
   votes: DS.hasMany('App.Vote', { live: true }),
   timestamp: DS.attr('date'),
 
-  voteCount: function() {
-    return this.get('votes.length');
-  }.property('votes.length'),
-
+  voteCount: Ember.computed.alias('votes.length'),
   voteOf: function(user) {
     return this.get('votes').find(function(vote) {
       return vote.get('voter') === user;
