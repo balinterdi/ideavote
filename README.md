@@ -1,9 +1,7 @@
-Ideavote
-========
+## Ideavote
 
-A single-page app to cast votes on ideas. Ideal for user groups.
+A very simple, single-page app to submit ideas and cast votes on them. Ideal for user groups.
 
-Implementation notes
-====================
+### Implementation notes
 
 It uses [Ember.js](http://emberjs.com) and sits on top of a [Firebase](https://www.firebase.com/) instance.
